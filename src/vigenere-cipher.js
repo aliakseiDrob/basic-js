@@ -24,50 +24,55 @@ class VigenereCipheringMachine {
     this.direct = direct;
     this.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   }
-  encrypt(message, keyword) {
-    if (!message || !keyword) {
+  encrypt(message, key) {
+    if (!message || !key) {
       throw new Error('Incorrect arguments!');
     }
     const input = message.toUpperCase();
-    const key = keyword.toUpperCase();
+    const keyword = key.toUpperCase();
 
-    let result = "";
+    let result = [];
     let keyIndex = 0;
 
     for (let i = 0; i < input.length; i++) {
       const char = input[i];
       if (this.alphabet.includes(char)) {
         const charIndex = this.alphabet.indexOf(char);
-        const keyCharIndex = this.alphabet.indexOf(key[keyIndex % key.length]);
-        const encryptedCharIndex = (charIndex + keyCharIndex) % 26;
+        const keyCharIndex = this.alphabet.indexOf(keyword[keyIndex % keyword.length]);
+        const encryptedCharIndex = (charIndex + keyCharIndex) % this.alphabet.length;
 
-        result += this.alphabet[encryptedCharIndex];
+        result.push(this.alphabet[encryptedCharIndex]);
         keyIndex++;
       } else {
-        result += char;
+        result.push(char);
       }
     }
 
-    return result;
+    return this.direct ? result.join('') : result.reverse().join('');
   }
   decrypt(message, key) {
     if (!message || !key) {
       throw new Error('Incorrect arguments!');
-    }/*
-    let result = ''
+    }
+    const input = message.toUpperCase();
+    const keyword = key.toUpperCase();
+    let result = [];
+    let keyIndex = 0;
 
-    for (let i = 0, j = 0; i < message.length; i++) {
-      const c = message.charAt(i)
-      if (c.toUpperCase() == c) {
-        result += String.fromCharCode(90 - (25 - (c.charCodeAt(0) - key.toUpperCase().charCodeAt(j))) % 26)
+    for (let i = 0; i < input.length; i++) {
+      const char = input[i];
+      if (this.alphabet.includes(char)) {
+        const charIndex = this.alphabet.indexOf(char);
+        const keyCharIndex = this.alphabet.indexOf(keyword[keyIndex % key.length]);
+        const decryptedCharIndex = (charIndex - keyCharIndex + this.alphabet.length) % this.alphabet.length;
+        result.push(this.alphabet[decryptedCharIndex]);
+        keyIndex++;
       } else {
-        result += String.fromCharCode(122 - (25 - (c.charCodeAt(0) - key.toLowerCase().charCodeAt(j))) % 26)
+        result.push(char);
       }
     }
-    j = ++j % key.length
-    return result;*/
+    return this.direct ? result.join('') : result.reverse().join('');
   }
-
 }
 
 module.exports = {
